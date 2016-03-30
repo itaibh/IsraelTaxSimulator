@@ -1,20 +1,41 @@
 <html>
 	<head>
 		<title>סימולציית מס הכנסה לשכירים</title>
+		<script src="2016.js"></script>
 		<style>
 			label { display: block; }
 		</style>
 	</head>
 	<body dir="rtl">
 		<h1>סימולציית מס הכנסה לשכירים</h1>
-		<label><span>שכר שנתי</span><input type="number" name="yearly_salary" /></label>
+		<label><span>בחר שנה</span>
+			<select id="year" name="year">
+				<option value="2016">2016</option>
+			</select>
+		</label>
+		<label><span>שכר שנתי</span><input type="number" name="yearly_income" /></label>
 		<label><span>מס שנתי</span><input type="number" name="yearly_tax" /></label>
 		<label><span>תרומות שנתיות</span><input type="number" name="yearly_donations" /></label>
 		<label><span>נקודות זיכוי</span><input type="number" name="tax_points" /></label>
+		<label><span>מס לתשלום</span><output id="calculated_tax"/></label>
 		<button onclick="calc()">חשב</button>
-<script>
-function calc(){
-}
-</script>
+	<script>
+		function calc(){
+			var year = document.getElementById("year").value;
+			var income = document.getElementById("yearly_income").value;
+			var levels = tax_details[year].tax_levels;
+			var mins = Object.keys(levels);
+			mins.sort();
+			var tax = 0;
+			for(var i=0;i<mins.length;++i)
+			{
+				if (income>min)
+				{
+					tax += (income - min) * levels[min];
+				}
+			}
+			document.getElementById("calculated_tax").value = tax;
+		}
+	</script>
 	</body>
 </html>
