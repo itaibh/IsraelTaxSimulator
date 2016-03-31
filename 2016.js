@@ -11,4 +11,7 @@ tax_details[2016] = {
         {min: 810721, tax: 0.50, additive: 284868},
     ],
     bonus_point_value:2592,
+    max_pension:7308,
+    pension_discount: 0.35,
+    donation_discout: 0.35,
 }

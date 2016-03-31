@@ -10,4 +10,7 @@ tax_details[2010] = {
         {min: 472081, tax: 0.45, additive: 127094},
     ],
     bonus_point_value:2460,
+    max_pension:7308,
+    pension_discount: 0.35,
+    donation_discout: 0.35,
 }
