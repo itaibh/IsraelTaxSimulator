@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>סימולציית מס הכנסה לשכירים</title>
+		<script src="knockout-3.4.0.js"></script>
 		<script src="2010.js"></script>
 		<script src="2011.js"></script>
 		<script src="2012.js"></script>
@@ -14,7 +15,7 @@
 	<body dir="rtl">
 		<h1>סימולציית מס הכנסה לשכירים</h1>
 		<label><span>בחר שנה</span>
-			<select id="year" name="year">
+			<select data-bind="value: year">
 				<option value="2010">2010</option>
 				<option value="2011">2011</option>
 				<option value="2013">2013</option>
@@ -23,40 +24,120 @@
 				<option value="2016">2016</option>
 			</select>
 		</label>
-		<label><span>שכר שנתי</span><input type="number" id="yearly_income" name="yearly_income" value="240000"/></label>
-		<label><span>מס שנתי</span><input type="number" id="yearly_tax" name="yearly_tax" /></label>
-		<label><span>תרומות שנתיות</span><input type="number" id="yearly_donations" name="yearly_donations" /></label>
-		<label><span>נקודות זיכוי</span><input type="number" step="0.25" id="tax_points" name="tax_points" value="2.25"/></label>
-		<label><span>הפרשות לביטוח פנסיוני</span><input type="number" id="pension" name="pension" value="13200"/></label>
-		<label><span>מס לתשלום</span><output id="calculated_tax"/></label>
-		<button onclick="calc()">חשב</button>
+		<div data-bind="foreach: reports">
+			<div class="report">
+				<label><span>שכר שנתי (158)</span><input type="number" data-bind="value: income"/></label>
+				<label><span>מס שנתי (42)</span><input type="number"data-bind="value: tax"/></label>
+				<label><span>תרומות שנתיות (37)</span><input type="number" data-bind="value: donations" /></label>
+				<label><span>נקודות זיכוי רגילות</span><input type="number" step="0.25" data-bind="value: points"/></label>
+				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number" data-bind="value: extraPoints"/></label>
+				<label><span>הפרשות לביטוח פנסיוני (45)</span><input type="number" data-bind="value: pension"/></label>
+				<button data-bind="click: $parent.removeReport">הסר דוח</button>
+			</div>
+		</div>
+		<label><span>מס לתשלום</span><output data-bind="value: calculatedTax"/></label>
+		<label><span>מס ששולם</span><output data-bind="value: paidTax"/></label>
+		<button data-bind="click: addReport">הוסף דוח</button>
+		<button data-bind="click: calcTax">חשב</button>
 	<script>
-		function calc(){
-			var year = document.getElementById("year").value;
-			var taxData = tax_details[year];
-			var income = parseInt(document.getElementById("yearly_income").value);
-			var points = parseFloat(document.getElementById("tax_points").value);
-			var pension = parseFloat(document.getElementById("pension").value);
-			var donations = parseFloat(document.getElementById("yearly_donations").value);
-			var levels = taxData.tax_levels;
-			var tax = 0;
-			var taxLevel = 0;
-			for(var i=0;i<levels.length;++i)
+		function ViewModel(){
+
+			var self = this;
+
+			this.year = ko.observable(2015);
+			this.paidTax = ko.observable(0);
+
+			this.reports = ko.observableArray([
+				{
+					//income:ko.observable(0),
+					//points:ko.observable(2.25),
+					//extraPoints:ko.observable(0),
+					//pension:ko.observable(0),
+					//donations:ko.observable(0),
+					//tax:ko.observable(0)
+					income:ko.observable(63929),
+					points:ko.observable(8.5),
+					extraPoints:ko.observable(0),
+					pension:ko.observable(2600),
+					donations:ko.observable(0),
+					tax:ko.observable(13778)
+				}
+			]);
+
+			this.calculatedTax = ko.observable(0);
+
+			this.addReport = function()
 			{
-				if (income <  levels[i].min) break;
-				taxLevel = i;
-			}
+				self.reports.push(
+					{
+						//income:ko.observable(0),
+						//points:ko.observable(2.25),
+						//extraPoints:ko.observable(0),
+						//pension:ko.observable(0),
+						//donations:ko.observable(0),
+						//tax:ko.observable(0)
+						income:ko.observable(227550),
+						points:ko.observable(4.25),
+						extraPoints:ko.observable(0),
+						pension:ko.observable(11260),
+						donations:ko.observable(0),
+						tax:ko.observable(41558)
+					}
+				);
+			};
 
-			var level = levels[taxLevel];
-			tax = level.additive + (income - level.min) * level.tax;
-			tax -= taxData.bonus_point_value * points;
-			tax -= Math.min(pension, taxData.max_pension) * taxData.pension_discount;
+			this.removeReport = function()
+			{
+				self.reports.remove(this);
+			};
 
-			if (!isNaN(donations)){
-				tax -= donations * taxData.donation_discout;
-			}
-			document.getElementById("calculated_tax").value = tax;
-		}
+			this.calcTax = function()
+			{
+				var income = 0;
+				var tax = 0;
+				var points = 0;
+				var extraPoints = 0;
+				var pension = 0;
+				var donations = 0;
+				for (var i=0;i<self.reports().length;++i)
+				{
+					var r = self.reports()[i];
+					income += r.income();
+					points = Math.max(points, r.points());
+					extraPoints += r.extraPoints();
+					pension += r.pension();
+					donations += r.donations();
+					tax += r.tax();
+				}
+
+				self.paidTax(tax);
+
+				var taxData = tax_details[self.year()];
+				var levels = taxData.tax_levels;
+				var calculatedTax = 0;
+				var taxLevel = 0;
+				for(var i=0;i<levels.length;++i)
+				{
+					if (income <  levels[i].min) break;
+					taxLevel = i;
+				}
+
+				var level = levels[taxLevel];
+				calculatedTax = level.additive + (income - level.min) * level.tax;
+				calculatedTax -= taxData.bonus_point_value * points;
+				calculatedTax -= extraPoints;
+				calculatedTax -= Math.min(pension, taxData.max_pension) * taxData.pension_discount;
+
+				if (!isNaN(donations)){
+					calculatedTax -= donations * taxData.donation_discout;
+				}
+
+				self.calculatedTax(calculatedTax);
+			};
+		};
+
+		ko.applyBindings(new ViewModel());
+
 	</script>
 	</body>
 </html>
