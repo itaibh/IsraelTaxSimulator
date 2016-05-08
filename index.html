@@ -9,7 +9,22 @@
 		<script src="2015.js"></script>
 		<script src="2016.js"></script>
 		<style>
-			label { display: block; }
+			body { font-family: tahoma, helvetica, sans-serif; }
+			label {
+				display: block;
+				margin: 5px;
+			}
+
+			label span {
+			    width: 12em;
+			    display: inline-block;
+			}
+
+			.report {
+			    border: 1px solid;
+			    padding: 5px;
+			    display: inline-block;
+			}
 		</style>
 	</head>
 	<body dir="rtl">
@@ -39,6 +54,15 @@
 		<label><span>מס ששולם</span><output data-bind="value: paidTax"/></label>
 		<button data-bind="click: addReport">הוסף דוח</button>
 		<button data-bind="click: calcTax">חשב</button>
+
+		<section id="tos">
+			<h2>תנאי שימוש</h2>
+			<p>
+				השירות כרגע בשלבי פיתוח ראשוניים.
+				השימוש הוא על אחריות המשתמש בלבד.
+				מפתח השירות לא יהיה אחראי לכל נזק שיגרם כתוצאה משימוש בשירות.
+			</p>
+		</section>
 	<script>
 		function ViewModel(){
 
