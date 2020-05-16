@@ -25,6 +25,14 @@ function ViewModel(){
 
     this.addReport = function()
     {
+        yearlyReportsStr = localStorage.getItem(self.year());
+        if (yearlyReportsStr != null) {
+            var yearlyReports = JSON.parse(yearlyReportsStr);
+            if (yearlyReports.length > self.reports().length) {
+                self.reports.push(yearlyReports[self.reports().length]);
+                return;
+            }
+        }
         self.reports.push(
             {
                 //income:ko.observable(0),
@@ -50,6 +58,8 @@ function ViewModel(){
     this.calcTax = function()
     {
         var taxData = tax_details[self.year()];
+
+        localStorage[self.year()] = ko.toJSON(self.reports());
 
         var income = 0;
         var tax = 0;

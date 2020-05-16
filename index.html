@@ -9,14 +9,18 @@
 			}
 
 			label span {
-			    width: 12em;
-			    display: inline-block;
+				width: 15em;
+				display: inline-block;
 			}
 
+			label input {
+				width: 6em;
+				display: inline-block;
+			}
 			.report {
-			    border: 1px solid;
-			    padding: 5px;
-			    display: inline-block;
+				border: 1px solid;
+				padding: 5px;
+				display: inline-block;
 			}
 
 			output { direction: ltr; }
@@ -45,11 +49,11 @@
 		</label>
 		<div data-bind="foreach: reports">
 			<div class="report">
-				<label><span>שכר שנתי (158)</span><input type="number" data-bind="value: income"/></label>
+				<label><span>שכר שנתי (158, 172)</span><input type="number" data-bind="value: income"/></label>
 				<label><span>מס שנתי (42)</span><input type="number"data-bind="value: tax"/></label>
 				<label><span>תרומות שנתיות (37)</span><input type="number" data-bind="value: donations" /></label>
 				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number" data-bind="value: extraPoints"/></label>
-				<label><span>הפרשות לביטוח פנסיוני (45)</span><input type="number" data-bind="value: pension"/></label>
+				<label><span>הפרשות לביטוח פנסיוני (45, 86)</span><input type="number" data-bind="value: pension"/></label>
 				<label><span>נקודות זיכוי</span><input type="number" step="0.25" data-bind="value: points"/></label>
 				<button data-bind="click: $parent.removeReport">הסר דוח</button>
 			</div>
