@@ -4,12 +4,12 @@ function ViewModel(){
 
     this.createObservableReport = function(report){
         var observableReport = {
-            income:ko.observable(report.income),
-            extraPoints:ko.observable(report.extraPoints),
-            pension:ko.observable(report.pension),
-            donations:ko.observable(report.donations),
-            points:ko.observable(report.points),
-            tax:ko.observable(report.tax)
+            income:ko.observable(report?report.income:0),
+            extraPoints:ko.observable(report?report.extraPoints:0),
+            pension:ko.observable(report?report.pension:0),
+            donations:ko.observable(report?report.donations:0),
+            points:ko.observable(report?report.points:0),
+            tax:ko.observable(report?report.tax:0)
         };
         return observableReport;
     };
@@ -18,14 +18,7 @@ function ViewModel(){
     this.paidTax = ko.observable(0);
 
     this.reports = ko.observableArray([
-        self.createObservableReport({
-            income:389192,
-            extraPoints:0,
-            pension:22320,
-            donations:0,
-            points:4.75,
-            tax:83372
-        })
+        self.createObservableReport()
     ]);
 
     this.calculatedTax = ko.observable(0);
@@ -41,16 +34,7 @@ function ViewModel(){
                 return;
             }
         }
-        self.reports.push(
-            self.createObservableReport({
-                income:164130,
-                extraPoints:0,
-                pension:8100,
-                donations:0,
-                points:5.25,
-                tax:7221
-            }
-        ));
+        self.reports.push(self.createObservableReport());
     };
 
     this.removeReport = function()
@@ -127,6 +111,8 @@ function ViewModel(){
             yearlyReports.forEach(report => {
                 self.reports.push(self.createObservableReport(report))
             });
+        } else {
+            self.reports.push(self.createObservableReport());
         }
     });
     
