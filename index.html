@@ -43,7 +43,6 @@
 				<option value="2019">2019</option>
 			</select>
 		</label>
-		<label><span>נקודות זיכוי</span><input type="number" step="0.25" data-bind="value: points"/></label>
 		<div data-bind="foreach: reports">
 			<div class="report">
 				<label><span>שכר שנתי (158)</span><input type="number" data-bind="value: income"/></label>
@@ -51,6 +50,7 @@
 				<label><span>תרומות שנתיות (37)</span><input type="number" data-bind="value: donations" /></label>
 				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number" data-bind="value: extraPoints"/></label>
 				<label><span>הפרשות לביטוח פנסיוני (45)</span><input type="number" data-bind="value: pension"/></label>
+				<label><span>נקודות זיכוי</span><input type="number" step="0.25" data-bind="value: points"/></label>
 				<button data-bind="click: $parent.removeReport">הסר דוח</button>
 			</div>
 		</div>
