@@ -2,43 +2,39 @@ function ViewModel(){
 
     var self = this;
 
-    this.year = ko.observable(2015);
-    this.points = ko.observable(4.25),
+    this.createObservableReport = function(report){
+        var observableReport = {
+            income:ko.observable(report?report.income:0),
+            extraPoints:ko.observable(report?report.extraPoints:0),
+            pension:ko.observable(report?report.pension:0),
+            donations:ko.observable(report?report.donations:0),
+            points:ko.observable(report?report.points:0),
+            tax:ko.observable(report?report.tax:0)
+        };
+        return observableReport;
+    };
+
+    this.year = ko.observable(2018);
     this.paidTax = ko.observable(0);
 
     this.reports = ko.observableArray([
-        {
-            //income:ko.observable(0),
-            //extraPoints:ko.observable(0),
-            //pension:ko.observable(0),
-            //donations:ko.observable(0),
-            //tax:ko.observable(0)
-            income:ko.observable(63929),
-            extraPoints:ko.observable(0),
-            pension:ko.observable(2600),
-            donations:ko.observable(0),
-            tax:ko.observable(13778)
-        }
+        self.createObservableReport()
     ]);
 
     this.calculatedTax = ko.observable(0);
 
     this.addReport = function()
     {
-        self.reports.push(
-            {
-                //income:ko.observable(0),
-                //extraPoints:ko.observable(0),
-                //pension:ko.observable(0),
-                //donations:ko.observable(0),
-                //tax:ko.observable(0)
-                income:ko.observable(227550),
-                extraPoints:ko.observable(0),
-                pension:ko.observable(11260),
-                donations:ko.observable(0),
-                tax:ko.observable(41558)
+        yearlyReportsStr = localStorage.getItem(self.year());
+        if (yearlyReportsStr != null) {
+            var yearlyReports = JSON.parse(yearlyReportsStr);
+            if (yearlyReports.length > self.reports().length) {
+                var lastReport = yearlyReports[self.reports().length];
+                self.reports.push(self.createObservableReport(lastReport));
+                return;
             }
-        );
+        }
+        self.reports.push(self.createObservableReport());
     };
 
     this.removeReport = function()
@@ -46,26 +42,45 @@ function ViewModel(){
         self.reports.remove(this);
     };
 
+    this.coerceReports = function(){
+        for (var i=0;i<self.reports().length;++i)
+        {
+            var r = self.reports()[i];
+            r.income(parseInt(r.income()));
+            r.extraPoints(parseInt(r.extraPoints()));
+            r.pension(parseInt(r.pension()));
+            r.donations(parseInt(r.donations()));
+            r.points(parseInt(r.points()));
+            r.tax(parseInt(r.tax()));
+        }
+    }
+
     this.calcTax = function()
     {
+        var taxData = tax_details[self.year()];
+
+        self.coerceReports();
+        localStorage[self.year()] = ko.toJSON(self.reports());
+
         var income = 0;
         var tax = 0;
         var extraPoints = 0;
         var pension = 0;
         var donations = 0;
+        var points = 0;
         for (var i=0;i<self.reports().length;++i)
         {
             var r = self.reports()[i];
             income += r.income();
             extraPoints += r.extraPoints();
-            pension += r.pension();
+            pension += Math.min(r.pension(), taxData.max_pension);
             donations += r.donations();
+            points += r.points();
             tax += r.tax();
         }
 
         self.paidTax(tax);
 
-        var taxData = tax_details[self.year()];
         var levels = taxData.tax_levels;
         var calculatedTax = 0;
         var taxLevel = 0;
@@ -77,9 +92,9 @@ function ViewModel(){
 
         var level = levels[taxLevel];
         calculatedTax = level.additive + (income - level.min) * level.tax;
-        calculatedTax -= taxData.bonus_point_value * this.points();
+        calculatedTax -= taxData.bonus_point_value * points;
         calculatedTax -= extraPoints;
-        calculatedTax -= Math.min(pension, taxData.max_pension) * taxData.pension_discount;
+        calculatedTax -= pension * taxData.pension_discount;
 
         if (!isNaN(donations)){
             calculatedTax -= donations * taxData.donation_discout;
@@ -87,6 +102,20 @@ function ViewModel(){
 
         self.calculatedTax(Math.round(calculatedTax) | 0);
     };
+
+    this.year.subscribe(function(year){
+        self.reports.removeAll();
+        yearlyReportsStr = localStorage.getItem(year);
+        if (yearlyReportsStr != null) {
+            var yearlyReports = JSON.parse(yearlyReportsStr);
+            yearlyReports.forEach(report => {
+                self.reports.push(self.createObservableReport(report))
+            });
+        } else {
+            self.reports.push(self.createObservableReport());
+        }
+    });
+    
 };
 
 ko.applyBindings(new ViewModel());

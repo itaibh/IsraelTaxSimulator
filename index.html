@@ -9,14 +9,18 @@
 			}
 
 			label span {
-			    width: 12em;
-			    display: inline-block;
+				width: 15em;
+				display: inline-block;
 			}
 
+			label input {
+				width: 6em;
+				display: inline-block;
+			}
 			.report {
-			    border: 1px solid;
-			    padding: 5px;
-			    display: inline-block;
+				border: 1px solid;
+				padding: 5px;
+				display: inline-block;
 			}
 
 			output { direction: ltr; }
@@ -43,14 +47,14 @@
 				<option value="2019">2019</option>
 			</select>
 		</label>
-		<label><span>נקודות זיכוי</span><input type="number" step="0.25" data-bind="value: points"/></label>
 		<div data-bind="foreach: reports">
 			<div class="report">
-				<label><span>שכר שנתי (158)</span><input type="number" data-bind="value: income"/></label>
-				<label><span>מס שנתי (42)</span><input type="number"data-bind="value: tax"/></label>
-				<label><span>תרומות שנתיות (37)</span><input type="number" data-bind="value: donations" /></label>
-				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number" data-bind="value: extraPoints"/></label>
-				<label><span>הפרשות לביטוח פנסיוני (45)</span><input type="number" data-bind="value: pension"/></label>
+				<label><span>שכר שנתי (158, 172)</span><input type="number" data-bind="numeric, value: income"/></label>
+				<label><span>מס שנתי (42)</span><input type="number"data-bind="numeric, value: tax"/></label>
+				<label><span>תרומות שנתיות (37)</span><input type="number" data-bind="numeric, value: donations" /></label>
+				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number" data-bind="numeric, value: extraPoints"/></label>
+				<label><span>הפרשות לביטוח פנסיוני (45, 86)</span><input type="number" data-bind="numeric, value: pension"/></label>
+				<label><span>נקודות זיכוי</span><input type="number" step="0.25" data-bind="numeric, value: points"/></label>
 				<button data-bind="click: $parent.removeReport">הסר דוח</button>
 			</div>
 		</div>
@@ -71,7 +75,7 @@
 			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6TWSGP52V6ZYW"><img src="https://camo.githubusercontent.com/bce14c8e2e39ba0464551b34602b4c60c182526b/68747470733a2f2f7777772e70617970616c6f626a656374732e636f6d2f656e5f55532f692f62746e2f62746e5f646f6e6174655f4c472e676966" alt="" data-canonical-src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" style="max-width:100%;"></a>
 			<a href="https://flattr.com/submit/auto?fid=83zlyd&amp;url=https%3A%2F%2Fgithub.com%2Fitaibh%2FPhpWebsiteBootstrap"><img src="https://camo.githubusercontent.com/6b27c2d051d09e13f4009938f0b67aedd4ffd280/68747470733a2f2f627574746f6e2e666c617474722e636f6d2f666c617474722d62616467652d6c617267652e706e67" alt="" data-canonical-src="https://button.flattr.com/flattr-badge-large.png" style="max-width:100%;"></a>
 		</p>
-	<script src="knockout-3.4.0.js"></script>
+	<script src="knockout-3.5.1.js"></script>
 	<script src="2010.js"></script>
 	<script src="2011.js"></script>
 	<script src="2012.js"></script>
