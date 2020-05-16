@@ -1,80 +1,161 @@
 <html>
-	<head>
-		<title>סימולציית מס הכנסה לשכירים</title>
-		<style>
-			body { font-family: tahoma, helvetica, sans-serif; }
-			label {
-				display: block;
-				margin: 5px;
-			}
 
-			label span {
-				width: 15em;
-				display: inline-block;
-			}
+<head>
+	<title>סימולציית מס הכנסה לשכירים</title>
+	<style>
+		body {
+			font-family: tahoma, helvetica, sans-serif;
+		}
 
-			label input {
-				width: 6em;
-				display: inline-block;
-			}
-			.report {
-				border: 1px solid;
-				padding: 5px;
-				display: inline-block;
-			}
+		div#reports_table_headers {
+			display: flex;
+			flex-direction: column;
+			border: 1px solid black;
+			padding: 5px;
+			margin-left: 5px;
+		}
 
-			output { direction: ltr; }
+		div#reports_table_headers label {
+			margin: 3px;
+		}
 
-			#tos {
-				border-top: 1px #aaa solid;
-				border-bottom: 1px #aaa solid;
-				margin-top: 1em;
-			}
-		</style>
-	</head>
-	<body dir="rtl">
-		<h1>סימולציית מס הכנסה לשכירים</h1>
-		<label><span>בחר שנה</span>
-			<select data-bind="value: year">
-				<option value="2010">2010</option>
-				<option value="2011">2011</option>
-				<option value="2013">2013</option>
-				<option value="2014">2014</option>
-				<option value="2015">2015</option>
-				<option value="2016">2016</option>
-				<option value="2017">2017</option>
-				<option value="2018">2018</option>
-				<option value="2019">2019</option>
-			</select>
-		</label>
-		<div data-bind="foreach: reports">
+		div#reports_table {
+			display: flex;
+		}
+
+		#year_select span {
+			width: auto;
+		}
+
+		span {
+			margin: 5px;
+		}
+
+		label {
+			display: block;
+			margin: 5px;
+		}
+
+		label span {
+			width: 15em;
+			display: inline-block;
+		}
+
+		label input {
+			width: 6em;
+			display: inline-block;
+			font: inherit;
+		}
+
+		.report {
+			border: 1px solid;
+			padding: 5px;
+			display: inline-flex;
+			flex-direction: column;
+		}
+
+		.report label span {
+			display: none;
+		}
+
+		div#sample_form {
+			align-content: flex-end;
+			margin: 0 5px;
+			border: 1px solid;
+			position: relative;
+		}
+
+		output {
+			direction: ltr;
+		}
+
+		#tos {
+			border-top: 1px #aaa solid;
+			border-bottom: 1px #aaa solid;
+			margin-top: 1em;
+		}
+
+		#marker {
+			border: 2px solid red;
+			position: absolute;
+			border-radius: 50%;
+		}
+	</style>
+</head>
+
+<body dir="rtl">
+	<h1>סימולציית מס הכנסה לשכירים</h1>
+	<label id="year_select"><span>בחר שנה</span>
+		<select data-bind="value: year">
+			<option value="2010">2010</option>
+			<option value="2011">2011</option>
+			<option value="2013">2013</option>
+			<option value="2014">2014</option>
+			<option value="2015">2015</option>
+			<option value="2016">2016</option>
+			<option value="2017">2017</option>
+			<option value="2018">2018</option>
+			<option value="2019">2019</option>
+		</select>
+	</label>
+	<div id="reports_table">
+		<div id="reports_table_headers">
+			<label><span>שכר שנתי (158, 172)</span></label>
+			<label><span>מס שנתי (42)</span></label>
+			<label><span>תרומות שנתיות (37)</span></label>
+			<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span></label>
+			<label><span>הפרשות לביטוח פנסיוני (45, 86)</span></label>
+			<label><span>נקודות זיכוי</span></label>
+		</div>
+		<div id="reports" data-bind="foreach: reports">
 			<div class="report">
-				<label><span>שכר שנתי (158, 172)</span><input type="number" data-bind="numeric, value: income"/></label>
-				<label><span>מס שנתי (42)</span><input type="number"data-bind="numeric, value: tax"/></label>
-				<label><span>תרומות שנתיות (37)</span><input type="number" data-bind="numeric, value: donations" /></label>
-				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number" data-bind="numeric, value: extraPoints"/></label>
-				<label><span>הפרשות לביטוח פנסיוני (45, 86)</span><input type="number" data-bind="numeric, value: pension"/></label>
-				<label><span>נקודות זיכוי</span><input type="number" step="0.25" data-bind="numeric, value: points"/></label>
+				<label><span>שכר שנתי (158, 172)</span><input type="number"
+						data-bind="numeric, value: income, event: { focus: $parent.moveMarker.bind($data, 'income') }" class="income" /></label>
+				<label><span>מס שנתי (42)</span><input type="number"
+						data-bind="numeric, value: tax, event: { focus: $parent.moveMarker.bind($data, 'tax') }" class="tax" /></label>
+				<label><span>תרומות שנתיות (37)</span><input type="number"
+						data-bind="numeric, value: donations, event: { focus: $parent.moveMarker.bind($data, 'donations') }" class="donations" /></label>
+				<label><span>סה&quot;כ שווי נקודות זיכוי נוספות</span><input type="number"
+						data-bind="numeric, value: extraPoints, event: { focus: $parent.moveMarker.bind($data, 'extraPoints') }" class="extraPoints" /></label>
+				<label><span>הפרשות לביטוח פנסיוני (45, 86)</span><input type="number"
+						data-bind="numeric, value: pension, event: { focus: $parent.moveMarker.bind($data, 'pension') }" class="pension" /></label>
+				<label><span>נקודות זיכוי</span><input type="number" step="0.25"
+						data-bind="numeric, value: points, event: { focus: $parent.moveMarker.bind($data, 'points') }"/></label>
 				<button data-bind="click: $parent.removeReport">הסר דוח</button>
 			</div>
 		</div>
-		<label><span>מס לתשלום</span><output data-bind="value: calculatedTax"/></label>
-		<label><span>מס ששולם</span><output data-bind="value: paidTax"/></label>
-		<button data-bind="click: addReport">הוסף דוח</button>
-		<button data-bind="click: calcTax">חשב</button>
 
-		<section id="tos">
-			<h2>תנאי שימוש</h2>
-			<ul>
-				<li>השירות כרגע בשלבי פיתוח ראשוניים.</li>
-				<li>השימוש הוא על אחריות המשתמש בלבד.</li>
-				<li>מפתח השירות לא יהיה אחראי לכל נזק שיגרם כתוצאה משימוש בשירות.</li>
-			</ul>
-		</section>
-		<p>
-			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6TWSGP52V6ZYW"><img src="https://camo.githubusercontent.com/bce14c8e2e39ba0464551b34602b4c60c182526b/68747470733a2f2f7777772e70617970616c6f626a656374732e636f6d2f656e5f55532f692f62746e2f62746e5f646f6e6174655f4c472e676966" alt="" data-canonical-src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" style="max-width:100%;"></a>
-			<a href="https://flattr.com/submit/auto?fid=83zlyd&amp;url=https%3A%2F%2Fgithub.com%2Fitaibh%2FPhpWebsiteBootstrap"><img src="https://camo.githubusercontent.com/6b27c2d051d09e13f4009938f0b67aedd4ffd280/68747470733a2f2f627574746f6e2e666c617474722e636f6d2f666c617474722d62616467652d6c617267652e706e67" alt="" data-canonical-src="https://button.flattr.com/flattr-badge-large.png" style="max-width:100%;"></a>
-		</p>
+		<div id="sample_form">
+			<img src="images/106/type1.png" />
+			<div id="marker"></div>
+		</div>
+	</div>
+
+	<label><span>מס לתשלום</span><output data-bind="value: calculatedTax" /></label>
+	<label><span>מס ששולם</span><output data-bind="value: paidTax" /></label>
+	<button data-bind="click: addReport">הוסף דוח</button>
+	<button data-bind="click: calcTax">חשב</button>
+
+	<section id="tos">
+		<h2>תנאי שימוש</h2>
+		<ul>
+			<li>השירות כרגע בשלבי פיתוח ראשוניים.</li>
+			<li>השימוש הוא על אחריות המשתמש בלבד.</li>
+			<li>מפתח השירות לא יהיה אחראי לכל נזק שיגרם כתוצאה משימוש בשירות.</li>
+		</ul>
+	</section>
+	<p>
+		<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6TWSGP52V6ZYW"><img
+				src="https://camo.githubusercontent.com/bce14c8e2e39ba0464551b34602b4c60c182526b/68747470733a2f2f7777772e70617970616c6f626a656374732e636f6d2f656e5f55532f692f62746e2f62746e5f646f6e6174655f4c472e676966"
+				alt="" data-canonical-src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+				style="max-width:100%;"></a>
+		<a
+			href="https://flattr.com/submit/auto?fid=83zlyd&amp;url=https%3A%2F%2Fgithub.com%2Fitaibh%2FPhpWebsiteBootstrap"><img
+				src="https://camo.githubusercontent.com/6b27c2d051d09e13f4009938f0b67aedd4ffd280/68747470733a2f2f627574746f6e2e666c617474722e636f6d2f666c617474722d62616467652d6c617267652e706e67"
+				alt="" data-canonical-src="https://button.flattr.com/flattr-badge-large.png"
+				style="max-width:100%;"></a>
+	</p>
+
 	<script src="knockout-3.5.1.js"></script>
 	<script src="2010.js"></script>
 	<script src="2011.js"></script>
@@ -86,5 +167,6 @@
 	<script src="2018.js"></script>
 	<script src="2019.js"></script>
 	<script src="main.js"></script>
-	</body>
+</body>
+
 </html>

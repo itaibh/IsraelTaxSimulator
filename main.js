@@ -1,3 +1,5 @@
+this.commonFields = ["income", "tax", "pension", "points", "extraPoints", "donations"];
+
 function ViewModel(){
 
     var self = this;
@@ -115,7 +117,10 @@ function ViewModel(){
             self.reports.push(self.createObservableReport());
         }
     });
-    
+        
+    this.moveMarker = function(fieldName) {
+        var marker = document.getElementById("marker");
+    }
 };
 
 ko.applyBindings(new ViewModel());
