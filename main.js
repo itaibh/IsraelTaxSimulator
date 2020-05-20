@@ -55,13 +55,30 @@ function ViewModel() {
     this.coerceReports = function () {
         for (var i = 0; i < self.reports().length; ++i) {
             var r = self.reports()[i];
-            r.income(parseInt(r.income()));
-            r.extraPoints(parseInt(r.extraPoints()));
-            r.pension(parseInt(r.pension()));
-            r.donations(parseInt(r.donations()));
-            r.points(parseInt(r.points()));
-            r.tax(parseInt(r.tax()));
+            r.income(parseFloat(r.income()));
+            r.extraPoints(parseFloat(r.extraPoints()));
+            r.pension(parseFloat(r.pension()));
+            r.donations(parseFloat(r.donations()));
+            r.points(parseFloat(r.points()));
+            r.tax(parseFloat(r.tax()));
         }
+    }
+
+    this.computeTax = function(report){
+        var taxData = tax_details[self.year()];
+        var levels = taxData.tax_levels;
+        var calculatedTax = 0;
+        var taxLevel = 0;
+        for (var i = 0; i < levels.length; ++i) {
+            if (report.income() < levels[i].min) break;
+            taxLevel = i;
+        }
+        var level = levels[taxLevel];
+        calculatedTax = level.additive + (report.income() - level.min) * level.tax;
+        calculatedTax -= taxData.bonus_point_value * report.points();
+        calculatedTax -= report.extraPoints();
+        calculatedTax -= report.pension() * taxData.pension_discount;
+        return calculatedTax;
     }
 
     this.calcTax = function () {
@@ -70,38 +87,17 @@ function ViewModel() {
         self.coerceReports();
         localStorage[self.year()] = ko.toJSON(self.reports());
 
-        var income = 0;
-        var tax = 0;
-        var extraPoints = 0;
-        var pension = 0;
-        var donations = 0;
-        var points = 0;
+        var calculatedTax = 0;
+        var paidTax = 0;
         for (var i = 0; i < self.reports().length; ++i) {
             var r = self.reports()[i];
-            income += r.income();
-            extraPoints += r.extraPoints();
-            pension += Math.min(r.pension(), taxData.max_pension);
-            donations += r.donations();
-            points += r.points();
-            tax += r.tax();
+            paidTax += r.tax();
+            calculatedTax += this.computeTax(r);
         }
-
-        self.paidTax(tax);
-
-        var levels = taxData.tax_levels;
-        var calculatedTax = 0;
-        var taxLevel = 0;
-        for (var i = 0; i < levels.length; ++i) {
-            if (income < levels[i].min) break;
-            taxLevel = i;
-        }
-
-        var level = levels[taxLevel];
-        calculatedTax = level.additive + (income - level.min) * level.tax;
-        calculatedTax -= taxData.bonus_point_value * points;
-        calculatedTax -= extraPoints;
-        calculatedTax -= pension * taxData.pension_discount;
-
+        
+        self.paidTax(paidTax);
+        
+        var donations = 0;
         if (!isNaN(donations)) {
             calculatedTax -= donations * taxData.donation_discout;
         }
