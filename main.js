@@ -8,7 +8,9 @@ function ViewModel() {
         type1: {
             income: { x: 86, y: 72, w: 25, h: 12 },
             points: { x: 104, y: 158, w: 25, h: 12 },
-            tax: { x: 108, y: 133, w: 25, h: 12 }
+            extraPoints: { x: 89, y: 161, w: 25, h: 12 },
+            tax: { x: 108, y: 133, w: 25, h: 12 },
+            pension: { x: 108, y: 144, w: 25, h: 12 }
         }
     }
 
